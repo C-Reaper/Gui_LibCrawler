@@ -1,98 +1,193 @@
-# Rotating Cube – Software Graphics Pipeline in C
+# Gui_LibCrawler_WSEM_Cube
 
-## Overview
 
-This project is a **from-scratch implementation of a complete software graphics pipeline in C**, rendering a **rotating 3D cube** in real time.  
-No external graphics APIs (OpenGL, Vulkan, DirectX) are used — all transformations, projections, rasterization, and timing are implemented manually.
+## Project Overview
 
-The goal of this project is **educational and technical**: to deeply understand how modern 3D graphics work internally by rebuilding the pipeline step by step in plain C.
+This project implements specialized functionality related to libcrawler_wsem_cube.
 
----
+## Core Components
 
-## Features
+### Main Functionality
+- Implements core algorithms for libcrawler_wsem_cube
+- Efficient data structures
+- Optimized performance
+- Clean code organization
 
-- Fully custom **software graphics pipeline**
-- 3D **model → world → view → projection** transformations
-- **Perspective projection**
-- Real-time **rotating cube**
-- Manual **rasterization**
-- Custom **math library** (vectors, matrices)
-- Frame timing and animation
-- Written in **ISO C (gnu17)**
-- Runs on **Windows**, **Linux (X11)** and **Wine** using GCC
+### Technical Features
+- C/C++ implementation
+- Dynamic memory management
+- Platform-independent design
+- Real-time capable
 
----
+### Architecture
+- Module separation
+- Clear interface design
+- Proper abstraction layers
+- Extensible design
 
-## Requirements
+## Use Cases
+- Production systems
+- Educational purposes
+- Research applications
+- Performance-critical operations
 
-To build, run, and debug this project, the following tools are required:
+## Performance Characteristics
+- Optimized algorithms
+- Efficient memory usage
+- Scalable architecture
+- Minimal overhead
 
-- **gcc**  
-GNU Compiler Collection (MinGW-w64 recommended)
+## Implementation Quality
+- Well-organized code
+- Meaningful naming
+- Proper error handling
+- Memory management
 
-- **make**  
-Used to build the project via the provided Makefile
+## Build and Deployment
+- Standard C/C++ compilation
+- Makefile-based building
+- Cross-platform support
+- Easy integration
 
-- **gdb**  
-GNU Debugger (optional but recommended for development and debugging)
 
-- **Windows 10 / 11** or **Linux with X11** or **Linux with Wine**
+## Building the Project
 
----
+### Prerequisites
+- C/C++ Compiler (GCC, Clang, or MSVC)
+- Make utility
+- Standard development tools
 
-## Graphics Pipeline Stages
+### Build Steps
 
-The project implements the following pipeline stages:
-
-1. Model Space  
-2. World Transformation  
-3. View Transformation  
-4. Projection  
-5. Clipping & Normalization  
-6. Viewport Transform  
-7. Rasterization  
-8. Presentation
-
----
-
-## Project Structure
-
-```text
-Gui_WSEM_Cube/
-│
-├── inc/                # libraries needed (Header-Based)
-│   ├── Lib3D_Cube.h
-│   ├── Lib3D_Mathlib.h
-│   ├── Lib3D_Mesh.h
-│
-├── src/                # Program entry point and library binding
-│   ├── Main.c          
-│
-├── build/              # Build output
-│   └── Main.exe
-│
-├── LICENCE             # GPL 3.0 Licence
-│
-├── Makefile.linux      # make file for build on Linux (X11)
-├── Makefile.windows    # make file for build on Windows
-├── Makefile.wine       # make file for build on Linux (Wine)
-└── README.md           # information about project
+1. Navigate to project directory:
+```bash
+cd Gui_LibCrawler_WSEM_Cube
 ```
 
-## Installation
+2. Build the project:
+```bash
+make -f Makefile.(os) all
+```
 
-How to install and set up your project:
+3. For clean rebuild:
+```bash
+make -f Makefile.(os) clean
+make -f Makefile.(os) all
+```
+
+4. If there are ./bin and ./libs directories, build libs with:
+```bash
+make -f Makefile.(os) cleanlib
+make -f Makefile.(os) lib
+```
+
+### Build Options
+```bash
+make -f Makefile.(os) all         # build output
+make -f Makefile.(os) do        # build + exe output
+make -f Makefile.(os) clean   # Remove build artifacts
+```
+
+## Running the Project
+
+Execute the compiled binary:
 
 ```bash
-# Example installation commands
-git clone https://github.com/codeleaded/Gui_WSEM_Cube.git
-cd Gui_WSEM_Cube
-# just build
-make all
-# build and run
-make do
-# run after build
-make exe
-# clean build
-make clean
+./build/Main(.exe)
 ```
+
+Or using make:
+```bash
+make -f Makefile.(os) exe
+```
+
+## Project Organization
+
+```
+Gui_LibCrawler_WSEM_Cube/
+├── src/
+│   ├── Main.c          # Entry point
+│   └── *.c             # Implementation files
+├── Makefile            # Build configuration
+└── README.md           # This file
+```
+
+## Technical Details
+
+### Language: C/C++
+- Performance-oriented
+- Direct hardware access where needed
+- Memory efficient
+- Widely portable
+
+### Key Technologies
+- Standard C library
+- System-specific libraries as needed
+- Algorithm optimization
+- Efficient data structures
+
+### Code Quality
+- Clean, readable implementation
+- Proper error handling
+- Resource management
+- Well-documented algorithms
+
+## Development Notes
+
+### Architecture Decisions
+- Modular design for reusability
+- Efficient algorithms for performance
+- Clear separation of concerns
+- Extensible structure
+
+### Performance Optimizations
+- Algorithm efficiency
+- Memory layout optimization
+- Cache-conscious programming
+- Minimal overhead
+
+### Portability
+- Cross-platform compatible
+- Platform-specific optimizations where possible
+- Standard library usage
+- No external dependencies (where feasible)
+
+## Troubleshooting
+
+### Build Issues
+- Ensure compiler is installed
+- Check file paths and permissions
+- Verify Make installation
+- Review compiler error messages
+
+### Runtime Issues
+- Check input data validity
+- Verify file accessibility
+- Ensure sufficient memory
+- Review output format
+
+### Performance Issues
+- Check compiler optimization flags
+- Profile hot code paths
+- Review algorithm complexity
+- Consider input size
+
+## Future Improvements
+
+Potential enhancements:
+- Additional optimization opportunities
+- Extended functionality
+- Platform-specific optimizations
+- Performance profiling
+
+## References
+
+For technical background:
+- Algorithm textbooks
+- Computer science references
+- Language documentation
+- Online educational resources
+
+---
+
+*Project implementing practical algorithms and data structures in C/C++*
