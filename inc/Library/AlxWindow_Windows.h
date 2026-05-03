@@ -41,7 +41,7 @@ typedef struct AlxWindow {
     void (*delete)(struct AlxWindow*);
     void (*resize)(struct AlxWindow*);
     States Strokes[MAX_STROKES];
-    AlxFont AlxFont;
+    AlxFont font;
     FDuration Delay;
     FDuration Repeat;
     Timepoint PressTick;
@@ -108,7 +108,7 @@ void AlxWindow_Exit(AlxWindow* w){
     if(w->Buffer) free(w->Buffer);
     w->Buffer = NULL;
     
-    AlxFont_Free(&w->AlxFont);
+    AlxFont_Free(&w->font);
     DestroyWindow(w->hwnd);
 }
 void AlxWindow_OnlyExit(AlxWindow* w){
@@ -394,8 +394,8 @@ void AlxWindow_GameInit(AlxWindow* w){
     SetWindowLongPtr(w->hwnd,GWLP_USERDATA,(LONG_PTR)w);
 
     w->Focus = 1;
-    w->AlxFont = AlxFont_New(ALXFONT_YANIS);
-    AlxFont_Resize(&w->AlxFont,40,40);
+    w->font = AlxFont_New(ALXFONT_YANIS);
+    AlxFont_Resize(&w->font,40,40);
     
     if(w->setup) w->setup(w);
     

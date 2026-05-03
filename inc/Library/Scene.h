@@ -214,12 +214,12 @@ typedef struct LabelEvent {
 typedef struct Label {
     Renderable renderable;
     String text;
-    AlxFont AlxFont;
+    AlxFont font;
 } Label;
 
 void Label_Render(unsigned int *Target, int Target_Width, int Target_Height,void* parent,Label* b){
-    int StrSizeX = b->AlxFont.CharSizeX * b->text.size;
-    int StrSizeY = b->AlxFont.CharSizeY;
+    int StrSizeX = b->font.CharSizeX * b->text.size;
+    int StrSizeY = b->font.CharSizeY;
     Vec2 Pos = b->renderable.rect.p;
     if(Alignment_active(b->renderable.Align,ALIGN_HORI_CENTER)) Pos.x += b->renderable.rect.d.x / 2 - StrSizeX / 2;
     if(Alignment_active(b->renderable.Align,ALIGN_VERT_CENTER)) Pos.y += b->renderable.rect.d.y / 2 - StrSizeY / 2;
@@ -230,7 +230,7 @@ void Label_Render(unsigned int *Target, int Target_Width, int Target_Height,void
     if(Alignment_active(b->renderable.Align,ALIGN_BORDER))
         Rect_RenderWire(Target,Target_Width,Target_Height,b->renderable.rect,b->renderable.Bc,1.0f);
     
-    CStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&b->AlxFont,b->text.Memory,b->text.size,Pos.x,Pos.y,b->renderable.Fg);
+    CStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&b->font,b->text.Memory,b->text.size,Pos.x,Pos.y,b->renderable.Fg);
 }
 void Label_Event(void* parent,Label* b,LabelEvent be){
     if(be.eid!=EVENT_NONE){
@@ -273,14 +273,14 @@ void Label_Update(void* parent,Label* b,States* states,Vec2 Mouse,Vec2 MouseB){
     }
 }
 void Label_Free(void* parent,Label* b){
-    AlxFont_Free(&b->AlxFont);
+    AlxFont_Free(&b->font);
     String_Free(&b->text);
 }
-Label Label_New(Renderable* Parent,char* text,void (*Label_React)(void*,Label*,LabelEvent*),AlxFont AlxFont,Vec2 AlxFontSize,Rect rect,unsigned int Align,unsigned int Bg,unsigned int Fg){
+Label Label_New(Renderable* Parent,char* text,void (*Label_React)(void*,Label*,LabelEvent*),AlxFont font,Vec2 AlxFontSize,Rect rect,unsigned int Align,unsigned int Bg,unsigned int Fg){
     Label b;
     b.text = String_Make(text);
-    b.AlxFont = AlxFont;
-    AlxFont_Resize(&b.AlxFont,(int)AlxFontSize.x,(int)AlxFontSize.y);
+    b.font = AlxFont;
+    AlxFont_Resize(&b.font,(int)AlxFontSize.x,(int)AlxFontSize.y);
     b.renderable = Renderable_New(Parent,(void(*)(unsigned int*,int,int,void*,void*))Label_Render,(void(*)(void*,void*,EventId*))Label_React,(void(*)(void*,void*,States*,Vec2,Vec2))Label_Update,(void(*)(void*,void*))Label_Free,rect,EVENT_STD_LABEL,Align,Bg,Fg,BLACK);
     return b;
 }
@@ -304,8 +304,8 @@ typedef LabelEvent ButtonEvent;
 typedef Label Button;
 
 void Button_Render(unsigned int *Target, int Target_Width, int Target_Height,void* parent,Button* b){
-    int StrSizeX = b->AlxFont.CharSizeX * b->text.size;
-    int StrSizeY = b->AlxFont.CharSizeY;
+    int StrSizeX = b->font.CharSizeX * b->text.size;
+    int StrSizeY = b->font.CharSizeY;
     
     Vec2 Pos = b->renderable.rect.p;
     Vec2 PosText = b->renderable.rect.p;
@@ -322,7 +322,7 @@ void Button_Render(unsigned int *Target, int Target_Width, int Target_Height,voi
     Rect_RenderXX(Target,Target_Width,Target_Height,Pos.x,Pos.y,b->renderable.rect.d.x,b->renderable.rect.d.y,BgColor);
     if(Alignment_active(b->renderable.Align,ALIGN_BORDER))
         Rect_RenderXXWire(Target,Target_Width,Target_Height,Pos.x,Pos.y,b->renderable.rect.d.x,b->renderable.rect.d.y,b->renderable.Bc,1.0f);
-    CStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&b->AlxFont,b->text.Memory,b->text.size,PosText.x,PosText.y,b->renderable.Fg);
+    CStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&b->font,b->text.Memory,b->text.size,PosText.x,PosText.y,b->renderable.Fg);
 }
 void Button_Event(void* parent,Button* b,ButtonEvent be){
     Label_Event(parent,(Label*)b,*(LabelEvent*)&be);
@@ -332,14 +332,14 @@ void Button_Update(void* parent,Button* b,States* states,Vec2 Mouse,Vec2 MouseB)
     Label_Update(parent,(Label*)b,states,Mouse,MouseB);
 }
 void Button_Free(void* parent,Button* b){
-    AlxFont_Free(&b->AlxFont);
+    AlxFont_Free(&b->font);
     String_Free(&b->text);
 }
-Button Button_New(Renderable* Parent,char* text,void (*Button_React)(void* parent,Button* b,ButtonEvent* be),AlxFont AlxFont,Vec2 AlxFontSize,Rect rect,int Align,unsigned int Bg,unsigned int Fg){
+Button Button_New(Renderable* Parent,char* text,void (*Button_React)(void* parent,Button* b,ButtonEvent* be),AlxFont font,Vec2 AlxFontSize,Rect rect,int Align,unsigned int Bg,unsigned int Fg){
     Button b;
     b.text = String_Make(text);
-    b.AlxFont = AlxFont;
-    AlxFont_Resize(&b.AlxFont,(int)AlxFontSize.x,(int)AlxFontSize.y);
+    b.font = AlxFont;
+    AlxFont_Resize(&b.font,(int)AlxFontSize.x,(int)AlxFontSize.y);
     b.renderable = Renderable_New(Parent,(void(*)(unsigned int*,int,int,void*,void*))Button_Render,(void(*)(void*,void*,EventId*))Button_React,(void(*)(void*,void*,States*,Vec2,Vec2))Button_Update,(void(*)(void*,void*))Button_Free,rect,EVENT_STD_BUTTON,Align,Bg,Fg,BLACK);
     return b;
 }
@@ -358,14 +358,14 @@ Button Button_NewStd(Renderable* Parent,char* text,void (*Button_React)(void* pa
 }
 Button Button_Cpy(Button* b){
     Button ret;
-    ret.AlxFont = AlxFont_Make(
-        Sprite_Cpy(&b->AlxFont.Atlas),
-        b->AlxFont.Columns,
-        b->AlxFont.Rows,
-        b->AlxFont.CharSizeX,
-        b->AlxFont.CharSizeY,
-        b->AlxFont.CharSizeX,
-        b->AlxFont.CharSizeY
+    ret.font = AlxFont_Make(
+        Sprite_Cpy(&b->font.Atlas),
+        b->font.Columns,
+        b->font.Rows,
+        b->font.CharSizeX,
+        b->font.CharSizeY,
+        b->font.CharSizeX,
+        b->font.CharSizeY
     );
     ret.renderable = Renderable_Cpy(&b->renderable);
     ret.text = String_Cpy(&b->text);
@@ -398,8 +398,8 @@ typedef struct ProgressBar {
 } ProgressBar;
 
 void ProgressBar_Render(unsigned int *Target, int Target_Width, int Target_Height,void* parent,ProgressBar* b){
-    int StrSizeX = b->label.AlxFont.CharSizeX * b->label.text.size;
-    int StrSizeY = b->label.AlxFont.CharSizeY;
+    int StrSizeX = b->label.font.CharSizeX * b->label.text.size;
+    int StrSizeY = b->label.font.CharSizeY;
     Vec2 Pos = b->label.renderable.rect.p;
     Vec2 PosText = b->label.renderable.rect.p;
     if(Alignment_active(b->label.renderable.Align,ALIGN_HORI_CENTER)) PosText.x += b->label.renderable.rect.d.x / 2 - StrSizeX / 2;
@@ -407,7 +407,7 @@ void ProgressBar_Render(unsigned int *Target, int Target_Width, int Target_Heigh
     unsigned int BgColor = b->label.renderable.Bg;
     
     Rect_RenderXX(Target,Target_Width,Target_Height,Pos.x,Pos.y,b->label.renderable.rect.d.x,b->label.renderable.rect.d.y,BgColor);
-    CStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&b->label.AlxFont,b->label.text.Memory,b->label.text.size,PosText.x,PosText.y,b->label.renderable.Fg);
+    CStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&b->label.font,b->label.text.Memory,b->label.text.size,PosText.x,PosText.y,b->label.renderable.Fg);
 
     Rect_RenderXXAlpha(Target,Target_Width,Target_Height,Pos.x,Pos.y,b->label.renderable.rect.d.x * b->Progress,b->label.renderable.rect.d.y,b->BarColor);
     if(Alignment_active(b->label.renderable.Align,ALIGN_BORDER))
@@ -432,14 +432,14 @@ void ProgressBar_Update(void* parent,ProgressBar* b,States* states,Vec2 Mouse,Ve
     }
 }
 void ProgressBar_Free(void* parent,ProgressBar* b){
-    AlxFont_Free(&b->label.AlxFont);
+    AlxFont_Free(&b->label.font);
     String_Free(&b->label.text);
 }
-ProgressBar ProgressBar_New(Renderable* Parent,char* text,void (*ProgressBar_React)(void* parent,ProgressBar* b,ProgressBarEvent* be),AlxFont AlxFont,Vec2 AlxFontSize,Rect rect,unsigned int Align,unsigned int Bg,unsigned int Fg,unsigned int BarColor,Timepoint LastTime,float Speed){
+ProgressBar ProgressBar_New(Renderable* Parent,char* text,void (*ProgressBar_React)(void* parent,ProgressBar* b,ProgressBarEvent* be),AlxFont font,Vec2 AlxFontSize,Rect rect,unsigned int Align,unsigned int Bg,unsigned int Fg,unsigned int BarColor,Timepoint LastTime,float Speed){
     ProgressBar b;
     b.label.text = String_Make(text);
-    b.label.AlxFont = AlxFont;
-    AlxFont_Resize(&b.label.AlxFont,(int)AlxFontSize.x,(int)AlxFontSize.y);
+    b.label.font = AlxFont;
+    AlxFont_Resize(&b.label.font,(int)AlxFontSize.x,(int)AlxFontSize.y);
     b.label.renderable = Renderable_New(Parent,(void(*)(unsigned int*,int,int,void*,void*))ProgressBar_Render,(void(*)(void*,void*,EventId*))ProgressBar_React,(void(*)(void*,void*,States*,Vec2,Vec2))ProgressBar_Update,(void(*)(void*,void*))ProgressBar_Free,rect,EVENT_STD_PROGRESSBAR,Align,Bg,Fg,BLACK);
 
     b.LastTime = LastTime;
@@ -649,13 +649,13 @@ void Textbox_Render(unsigned int *Target, int Target_Width, int Target_Height,vo
         if(tb->ScrollX + CurserX < 0 || tb->ScrollX + CurserX > xEnd){
             tb->ScrollX = F32_Clamp(tb->ScrollX,-CurserX,-CurserX + (int)xEnd);
             //tb->ScrollX = -CurserX;
-            //tb->ScrollX = (int)(F32_Abs(tb->ScrollX) <= F32_Abs(text_width / tb->font.CharSizeX - 5)?0: tb->ScrollX + text_width / tb->AlxFont.CharSizeX - 5);
+            //tb->ScrollX = (int)(F32_Abs(tb->ScrollX) <= F32_Abs(text_width / tb->font.CharSizeX - 5)?0: tb->ScrollX + text_width / tb->font.CharSizeX - 5);
         }
         if(tb->ScrollY + CurserY < 0 || tb->ScrollY + CurserY > yEnd){
             tb->ScrollY = F32_Clamp(tb->ScrollY,-CurserY,-CurserY + (int)yEnd);
             if(tb->In.MaxLine==1) tb->ScrollY = 0;
             //tb->ScrollY = -CurserY;
-            //tb->ScrollY = (int)(F32_Abs(tb->ScrollY) <= F32_Abs(text_height / tb->font.CharSizeY - 5)?0: tb->ScrollY + text_height / tb->AlxFont.CharSizeY - 5);
+            //tb->ScrollY = (int)(F32_Abs(tb->ScrollY) <= F32_Abs(text_height / tb->font.CharSizeY - 5)?0: tb->ScrollY + text_height / tb->font.CharSizeY - 5);
         }
     }
 
@@ -922,13 +922,13 @@ void Editor_Render(unsigned int *Target, int Target_Width, int Target_Height,voi
         if(tb->ScrollX + CurserX < 0 || tb->ScrollX + CurserX > xEnd){
             tb->ScrollX = F32_Clamp(tb->ScrollX,-CurserX,-CurserX + (int)xEnd);
             //tb->ScrollX = -CurserX;
-            //tb->ScrollX = (int)(F32_Abs(tb->ScrollX) <= F32_Abs(text_width / tb->font.CharSizeX - 5)?0: tb->ScrollX + text_width / tb->AlxFont.CharSizeX - 5);
+            //tb->ScrollX = (int)(F32_Abs(tb->ScrollX) <= F32_Abs(text_width / tb->font.CharSizeX - 5)?0: tb->ScrollX + text_width / tb->font.CharSizeX - 5);
         }
         if(tb->ScrollY + CurserY < 0 || tb->ScrollY + CurserY > yEnd){
             tb->ScrollY = F32_Clamp(tb->ScrollY,-CurserY,-CurserY + (int)yEnd);
             if(tb->In.MaxLine==1) tb->ScrollY = 0;
             //tb->ScrollY = -CurserY;
-            //tb->ScrollY = (int)(F32_Abs(tb->ScrollY) <= F32_Abs(text_height / tb->font.CharSizeY - 5)?0: tb->ScrollY + text_height / tb->AlxFont.CharSizeY - 5);
+            //tb->ScrollY = (int)(F32_Abs(tb->ScrollY) <= F32_Abs(text_height / tb->font.CharSizeY - 5)?0: tb->ScrollY + text_height / tb->font.CharSizeY - 5);
         }
     }
 

@@ -15,7 +15,7 @@ typedef struct TextBox {
     Tex t;
     Rect r;
     char* Path;
-    AlxFont AlxFont;
+    AlxFont font;
     int ScrollX;
     int ScrollY;
     HighLight Syntax;
@@ -24,18 +24,18 @@ typedef struct TextBox {
 } TextBox;
 
 void TextBox_AlxFontSetSize(TextBox* tb,int CharSizeX,int CharSizeY){
-    AlxFont_Free(&tb->AlxFont);
-    tb->AlxFont = AlxFont_New(Sprite_Load(tb->Path),tb->AlxFont.Columns,tb->AlxFont.Rows,tb->AlxFont.CharSizeX,tb->AlxFont.CharSizeY);
-    AlxFont_Resize(&tb->AlxFont,CharSizeX,CharSizeY);
+    AlxFont_Free(&tb->font);
+    tb->font = AlxFont_New(Sprite_Load(tb->Path),tb->font.Columns,tb->font.Rows,tb->font.CharSizeX,tb->font.CharSizeY);
+    AlxFont_Resize(&tb->font,CharSizeX,CharSizeY);
 }
 void TextBox_AlxFontResize(TextBox* tb,int CharSizeX,int CharSizeY){
-    AlxFont_Resize(&tb->AlxFont,CharSizeX,CharSizeY);
+    AlxFont_Resize(&tb->font,CharSizeX,CharSizeY);
 }
 void TextBox_ZoomIn(TextBox* tb){
-    TextBox_AlxFontSetSize(tb,tb->AlxFont.CharSizeX+1,tb->AlxFont.CharSizeY+1);
+    TextBox_AlxFontSetSize(tb,tb->font.CharSizeX+1,tb->font.CharSizeY+1);
 }
 void TextBox_ZoomOut(TextBox* tb){
-    TextBox_AlxFontSetSize(tb,tb->AlxFont.CharSizeX-1,tb->AlxFont.CharSizeY-1);
+    TextBox_AlxFontSetSize(tb,tb->font.CharSizeX-1,tb->font.CharSizeY-1);
 }
 
 TextBox TextBox_New(Input In,Rect r,char* Path,int Columns,int Rows,int CharSizeX,int CharSizeY,int AlxFontSizeX,int AlxFontSizeY,unsigned int Bg){
@@ -44,7 +44,7 @@ TextBox TextBox_New(Input In,Rect r,char* Path,int Columns,int Rows,int CharSize
     tb.t = Vector_New(sizeof(SymbolInfo));
     tb.r = r;
     tb.Path = CStr_Cpy(Path);
-    tb.AlxFont = AlxFont_Make(Sprite_Load(Path),Columns,Rows,CharSizeX,CharSizeY,AlxFontSizeX,AlxFontSizeY);
+    tb.font = AlxFont_Make(Sprite_Load(Path),Columns,Rows,CharSizeX,CharSizeY,AlxFontSizeX,AlxFontSizeY);
     tb.ScrollX = 0;
     tb.ScrollY = 0;
     tb.Syntax = Vector_New(sizeof(Pair));
@@ -97,8 +97,8 @@ void TextBox_Update(TextBox* tb,States* Strokes,Vec2 Mouse){
             tb->In.Curser,
             Input_GetCurser(
                 &tb->In,
-                (Mouse.x - tb->r.p.x) / tb->AlxFont.CharSizeX - tb->ScrollX,
-                (Mouse.y - tb->r.p.y) / (tb->AlxFont.CharSizeY * INPUT_GAP_FAKTOR) - tb->ScrollY
+                (Mouse.x - tb->r.p.x) / tb->font.CharSizeX - tb->ScrollX,
+                (Mouse.y - tb->r.p.y) / (tb->font.CharSizeY * INPUT_GAP_FAKTOR) - tb->ScrollY
             ),
             INPUT_BLOCKCHAR
         );
@@ -109,8 +109,8 @@ void TextBox_Update(TextBox* tb,States* Strokes,Vec2 Mouse){
             tb->In.CurserEnd,
             Input_GetCurser(
                 &tb->In,
-                (Mouse.x - tb->r.p.x) / tb->AlxFont.CharSizeX - tb->ScrollX,
-                (Mouse.y - tb->r.p.y) / (tb->AlxFont.CharSizeY * INPUT_GAP_FAKTOR) - tb->ScrollY
+                (Mouse.x - tb->r.p.x) / tb->font.CharSizeX - tb->ScrollX,
+                (Mouse.y - tb->r.p.y) / (tb->font.CharSizeY * INPUT_GAP_FAKTOR) - tb->ScrollY
             ),
             INPUT_BLOCKCHAR
         );
@@ -128,20 +128,20 @@ void TextBox_Render(unsigned int* Target,int Target_Width,int Target_Height,Text
     int CurserX = Input_CurserX(&tb->In,tb->In.Curser);
     int CurserY = Input_CurserY(&tb->In,tb->In.Curser);
 
-    float xEnd = tb->r.d.x / (float)tb->AlxFont.CharSizeX * 0.8f;
-    float yEnd = tb->r.d.y / (float)tb->AlxFont.CharSizeY * 0.8f;
+    float xEnd = tb->r.d.x / (float)tb->font.CharSizeX * 0.8f;
+    float yEnd = tb->r.d.y / (float)tb->font.CharSizeY * 0.8f;
 
     if(tb->In.Enabled){
         if(tb->ScrollX + CurserX < 0 || tb->ScrollX + CurserX > xEnd){
             tb->ScrollX = F32_Clamp(tb->ScrollX,-CurserX,-CurserX + (int)xEnd);
             //tb->ScrollX = -CurserX;
-            //tb->ScrollX = (int)(F32_Abs(tb->ScrollX) <= F32_Abs(tb->r.d.x / tb->AlxFont.CharSizeX - 5)?0: tb->ScrollX + tb->r.d.x / tb->AlxFont.CharSizeX - 5);
+            //tb->ScrollX = (int)(F32_Abs(tb->ScrollX) <= F32_Abs(tb->r.d.x / tb->font.CharSizeX - 5)?0: tb->ScrollX + tb->r.d.x / tb->font.CharSizeX - 5);
         }
         if(tb->ScrollY + CurserY < 0 || tb->ScrollY + CurserY > yEnd){
             tb->ScrollY = F32_Clamp(tb->ScrollY,-CurserY,-CurserY + (int)yEnd);
             if(tb->In.MaxLine==1) tb->ScrollY = 0;
             //tb->ScrollY = -CurserY;
-            //tb->ScrollY = (int)(F32_Abs(tb->ScrollY) <= F32_Abs(tb->r.d.y / tb->AlxFont.CharSizeY - 5)?0: tb->ScrollY + tb->r.d.y / tb->AlxFont.CharSizeY - 5);
+            //tb->ScrollY = (int)(F32_Abs(tb->ScrollY) <= F32_Abs(tb->r.d.y / tb->font.CharSizeY - 5)?0: tb->ScrollY + tb->r.d.y / tb->font.CharSizeY - 5);
         }
     }
 
@@ -155,14 +155,14 @@ void TextBox_Render(unsigned int* Target,int Target_Width,int Target_Height,Text
     for(int i = Lines;i<=MaxLine;i++){
         FirstChar -= tb->ScrollX;
         int Size = LastChar - FirstChar;
-        float x = tb->ScrollX * tb->AlxFont.CharSizeX + tb->r.p.x;
-        float y = tb->r.p.y + (tb->ScrollY + i) * (tb->AlxFont.CharSizeY * INPUT_GAP_FAKTOR);
+        float x = tb->ScrollX * tb->font.CharSizeX + tb->r.p.x;
+        float y = tb->r.p.y + (tb->ScrollY + i) * (tb->font.CharSizeY * INPUT_GAP_FAKTOR);
 
         x = F32_Clamp(x,tb->r.p.x,tb->r.p.x+tb->r.d.x);
         y = F32_Clamp(y,tb->r.p.y,tb->r.p.y+tb->r.d.y);
-        Size = (int)F32_Clamp(Size,0,(tb->r.d.x - (x - tb->r.p.x)) / tb->AlxFont.CharSizeX);
+        Size = (int)F32_Clamp(Size,0,(tb->r.d.x - (x - tb->r.p.x)) / tb->font.CharSizeX);
 
-        TCStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&tb->AlxFont,Vector_Get(&tb->t,FirstChar),(unsigned char*)(tb->In.Buffer.Memory + FirstChar),Size,x,y);
+        TCStr_RenderSizeAlxFont(Target,Target_Width,Target_Height,&tb->font,Vector_Get(&tb->t,FirstChar),(unsigned char*)(tb->In.Buffer.Memory + FirstChar),Size,x,y);
 
         int TempF = String_FirstCharOfLineLast(&tb->In.Buffer,i+1,FirstChar,LastChar,i);
         int TempL = String_LastCharOfLineLast(&tb->In.Buffer,i+1,FirstChar,LastChar,i);
@@ -175,7 +175,7 @@ void TextBox_Render(unsigned int* Target,int Target_Width,int Target_Height,Text
     }
 
     if(tb->In.Enabled){
-        Char_RenderAlxFont(Target,Target_Width,Target_Height,&tb->AlxFont,'_',tb->r.p.x+(CurserX + tb->ScrollX) * tb->AlxFont.CharSizeX,tb->r.p.y+(CurserY + tb->ScrollY) * (tb->AlxFont.CharSizeY * INPUT_GAP_FAKTOR),0xFFFF0000);
+        Char_RenderAlxFont(Target,Target_Width,Target_Height,&tb->font,'_',tb->r.p.x+(CurserX + tb->ScrollX) * tb->font.CharSizeX,tb->r.p.y+(CurserY + tb->ScrollY) * (tb->font.CharSizeY * INPUT_GAP_FAKTOR),0xFFFF0000);
 
         if(tb->In.Curser!=tb->In.CurserEnd && tb->In.CurserEnd>=0){
             int Up = tb->In.Curser<tb->In.CurserEnd?tb->In.Curser:tb->In.CurserEnd;
@@ -186,10 +186,10 @@ void TextBox_Render(unsigned int* Target,int Target_Width,int Target_Height,Text
                 if(String_Get(&tb->In.Buffer,i)=='\n'){
                     int X = (i+1<Down?i+1:Down+1) - Before;
 
-                    float x = tb->r.p.x+(Input_CurserX(&tb->In,Before) + tb->ScrollX) * tb->AlxFont.CharSizeX;
-                    float y = tb->r.p.y+(Input_CurserY(&tb->In,Before) + tb->ScrollY) * (tb->AlxFont.CharSizeY * INPUT_GAP_FAKTOR);
-                    float w = X * tb->AlxFont.CharSizeX;
-                    float h = (tb->AlxFont.CharSizeY * INPUT_GAP_FAKTOR);
+                    float x = tb->r.p.x+(Input_CurserX(&tb->In,Before) + tb->ScrollX) * tb->font.CharSizeX;
+                    float y = tb->r.p.y+(Input_CurserY(&tb->In,Before) + tb->ScrollY) * (tb->font.CharSizeY * INPUT_GAP_FAKTOR);
+                    float w = X * tb->font.CharSizeX;
+                    float h = (tb->font.CharSizeY * INPUT_GAP_FAKTOR);
                     
                     x = F32_Clamp(x,tb->r.p.x,tb->r.p.x+tb->r.d.x);
                     y = F32_Clamp(y,tb->r.p.y,tb->r.p.y+tb->r.d.y);
@@ -218,7 +218,7 @@ void TextBox_Free(TextBox* tb){
     Vector_Free(&tb->Syntax);
     free(tb->Path);
     tb->Path = NULL;
-    AlxFont_Free(&tb->AlxFont);
+    AlxFont_Free(&tb->font);
 }
 
 #endif // !TEXTBOX_H

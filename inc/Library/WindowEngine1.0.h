@@ -70,11 +70,11 @@ AlxWindow window;
 #define RenderCStrAlxFontTex(f,t,cstr,x,y)                           Graphics_RenderCStrAlxFontTex(window.Buffer,window.Width,window.Height,f,t,cstr,x,y)
 #define RenderCStrSizeAlxFontTex(f,t,cstr,Size,x,y)                  Graphics_RenderCStrSizeAlxFontTex(window.Buffer,window.Width,window.Height,f,t,cstr,Size,x,y)
 
-#define RenderChar(c,x,y,Color)                                      Graphics_RenderCharAlxFont(window.Buffer,window.Width,window.Height,&window.AlxFont,c,x,y,Color)
-#define RenderCStr(cstr,x,y,Color)                                   Graphics_RenderCStrAlxFont(window.Buffer,window.Width,window.Height,&window.AlxFont,cstr,x,y,Color)
-#define RenderCStrSize(cstr,Size,x,y,Color)                          Graphics_RenderCStrSizeAlxFont(window.Buffer,window.Width,window.Height,&window.AlxFont,cstr,Size,x,y,Color)
-#define RenderCStrTex(t,cstr,x,y)                                    Graphics_RenderCStrAlxFontTex(window.Buffer,window.Width,window.Height,&window.AlxFont,t,cstr,x,y)
-#define RenderCStrSizeTex(t,cstr,Size,x,y)                           Graphics_RenderCStrSizeAlxFontTex(window.Buffer,window.Width,window.Height,&window.AlxFont,t,cstr,Size,x,y)
+#define RenderChar(c,x,y,Color)                                      Graphics_RenderCharAlxFont(window.Buffer,window.Width,window.Height,&window.font,c,x,y,Color)
+#define RenderCStr(cstr,x,y,Color)                                   Graphics_RenderCStrAlxFont(window.Buffer,window.Width,window.Height,&window.font,cstr,x,y,Color)
+#define RenderCStrSize(cstr,Size,x,y,Color)                          Graphics_RenderCStrSizeAlxFont(window.Buffer,window.Width,window.Height,&window.font,cstr,Size,x,y,Color)
+#define RenderCStrTex(t,cstr,x,y)                                    Graphics_RenderCStrAlxFontTex(window.Buffer,window.Width,window.Height,&window.font,t,cstr,x,y)
+#define RenderCStrSizeTex(t,cstr,Size,x,y)                           Graphics_RenderCStrSizeAlxFontTex(window.Buffer,window.Width,window.Height,&window.font,t,cstr,Size,x,y)
 
 #define RenderTextBox(tb)                                            Graphics_RenderTextBox(window.Buffer,window.Width,window.Height,tb)
 
@@ -104,24 +104,24 @@ Rect GetScreenRect(){
 
 
 AlxFont* GetAlxFont(){
-    return &window.AlxFont;
+    return &window.font;
 }
 void SetAlxFont(Sprite s,int Columns,int Rows,int CharSizeX,int CharSizeY){
-    AlxFont_Free(&window.AlxFont);
-    window.AlxFont = AlxFont_New(s,Columns,Rows,CharSizeX,CharSizeY);
+    AlxFont_Free(&window.font);
+    window.font = AlxFont_New(s,Columns,Rows,CharSizeX,CharSizeY);
 }
 void SetAlxFontTo(AlxFont f,int CharSizeX,int CharSizeY){
-    AlxFont_Free(&window.AlxFont);
-    window.AlxFont = f;
-    AlxFont_Resize(&window.AlxFont,CharSizeX,CharSizeY);
+    AlxFont_Free(&window.font);
+    window.font = f;
+    AlxFont_Resize(&window.font,CharSizeX,CharSizeY);
 }
 void ResizeAlxFont(int CharSizeX,int CharSizeY){
-    AlxFont_Resize(&window.AlxFont,CharSizeX,CharSizeY);
+    AlxFont_Resize(&window.font,CharSizeX,CharSizeY);
 }
 void ReloadAlxFont(int CharSizeX,int CharSizeY){
-    if(window.AlxFont.CharSizeX!=CharSizeX || window.AlxFont.CharSizeY!=CharSizeY){
-        AlxFont_Free(&window.AlxFont);
-        window.AlxFont = AlxFont_MAKE_YANIS(CharSizeX,CharSizeY);
+    if(window.font.CharSizeX!=CharSizeX || window.font.CharSizeY!=CharSizeY){
+        AlxFont_Free(&window.font);
+        window.font = AlxFont_MAKE_YANIS(CharSizeX,CharSizeY);
     }
 }
 
